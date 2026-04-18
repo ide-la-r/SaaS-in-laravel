@@ -6,11 +6,13 @@ use App\Models\ActivityLog;
 use App\Models\Plan;
 use App\Models\Team;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class UpgradePlan
 {
     public function execute(Team $team, Plan $newPlan): Team
     {
+        Gate::authorize('update', $team);
         $oldPlan = $team->plan;
 
         // If Stripe price is set, handle subscription

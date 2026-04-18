@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Actions\InviteMember;
 use App\Exceptions\PlanLimitExceededException;
+use App\Http\Requests\InviteMemberRequest;
 use App\Models\Team;
 use Livewire\Component;
 
@@ -14,10 +15,10 @@ class TeamMembers extends Component
 
     public function invite(): void
     {
-        $this->validate([
-            'email' => 'required|email',
-            'role' => 'in:member,admin',
-        ]);
+        $request = new InviteMemberRequest();
+        $request->merge($this->only(['email', 'role']));
+        $request->setUserResolver(fn() => auth()->user());
+        $validated = $request->validateResolved();
 
         $team = auth()->user()->currentTeam;
 

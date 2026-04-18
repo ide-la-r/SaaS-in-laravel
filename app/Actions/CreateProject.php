@@ -10,11 +10,13 @@ use App\Models\Team;
 use App\Services\PlanLimiter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class CreateProject
 {
     public function execute(Team $team, array $data): Project
     {
+        Gate::authorize('create', Project::class);
         PlanLimiter::check($team, 'max_projects');
 
         return DB::transaction(function () use ($team, $data) {

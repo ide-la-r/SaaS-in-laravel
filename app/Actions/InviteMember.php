@@ -7,11 +7,13 @@ use App\Models\Team;
 use App\Models\User;
 use App\Services\PlanLimiter;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class InviteMember
 {
     public function execute(Team $team, string $email, string $role = 'member'): User
     {
+        Gate::authorize('inviteMember', $team);
         PlanLimiter::check($team, 'max_members');
 
         $user = User::where('email', $email)->firstOrFail();

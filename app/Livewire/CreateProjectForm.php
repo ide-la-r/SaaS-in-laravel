@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Actions\CreateProject;
 use App\Exceptions\PlanLimitExceededException;
+use App\Http\Requests\StoreProjectRequest;
 use Livewire\Component;
 
 class CreateProjectForm extends Component
@@ -13,10 +14,10 @@ class CreateProjectForm extends Component
 
     public function save(): void
     {
-        $this->validate([
-            'name' => 'required|min:2|max:255',
-            'description' => 'nullable|max:1000',
-        ]);
+        $request = new StoreProjectRequest();
+        $request->merge($this->only(['name', 'description']));
+        $request->setUserResolver(fn() => auth()->user());
+        $validated = $request->validateResolved();
 
         $team = auth()->user()->currentTeam;
 

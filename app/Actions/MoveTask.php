@@ -7,11 +7,13 @@ use App\Models\Column;
 use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class MoveTask
 {
     public function execute(Task $task, int $columnId, int $position): Task
     {
+        Gate::authorize('update', $task);
         return DB::transaction(function () use ($task, $columnId, $position) {
             $oldColumn = $task->column;
             $newColumn = Column::findOrFail($columnId);

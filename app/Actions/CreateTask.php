@@ -6,11 +6,13 @@ use App\Models\ActivityLog;
 use App\Models\Column;
 use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class CreateTask
 {
     public function execute(Column $column, array $data): Task
     {
+        Gate::authorize('create', Task::class);
         $maxPosition = $column->tasks()->max('position') ?? -1;
 
         $task = Task::create([
